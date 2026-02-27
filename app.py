@@ -124,30 +124,139 @@ st.markdown("""
     .sidebar-footer { color: #4e4e62; font-size: 11px; text-align: center; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 8px; }
     .sidebar-footer span { color: #10b981; font-weight: 600; }
 
+    /* Section card */
+    .sidebar-card {
+        background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(16,185,129,0.02) 100%);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        padding: 18px 16px;
+        margin: 8px 0 16px 0;
+        transition: all 0.3s ease;
+    }
+    .sidebar-card:hover {
+        border-color: rgba(16,185,129,0.15);
+        box-shadow: 0 4px 20px rgba(16,185,129,0.05);
+    }
+    .sidebar-card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #ebebec;
+        margin-bottom: 14px;
+        letter-spacing: 0.02em;
+    }
+    .sidebar-card-title .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    .sidebar-card-title .icon.green { background: rgba(16,185,129,0.12); }
+    .sidebar-card-title .icon.blue { background: rgba(96,165,250,0.12); }
+    .sidebar-card-title .icon.purple { background: rgba(139,92,246,0.12); }
+
     /* Budget bar */
     .budget-bar { 
-        background: rgba(255,255,255,0.04); border-radius: 8px; height: 8px; 
-        margin: 8px 0; overflow: hidden; 
+        background: rgba(255,255,255,0.04); border-radius: 8px; height: 10px; 
+        margin: 10px 0; overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     }
     .budget-fill { 
-        height: 100%; border-radius: 8px; transition: width 0.5s ease; 
+        height: 100%; border-radius: 8px; transition: width 0.5s ease;
+        box-shadow: 0 0 8px rgba(16,185,129,0.3);
     }
     .budget-fill.safe { background: linear-gradient(90deg, #10b981, #34d399); }
-    .budget-fill.warn { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
-    .budget-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); }
+    .budget-fill.warn { background: linear-gradient(90deg, #fbbf24, #f59e0b); box-shadow: 0 0 8px rgba(251,191,36,0.3); }
+    .budget-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); box-shadow: 0 0 8px rgba(248,113,113,0.3); }
+    .budget-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #8888a8;
+        margin-top: 4px;
+    }
+    .budget-stats strong { font-weight: 700; }
+    .budget-pct {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 800;
+        margin: 8px 0 4px 0;
+        letter-spacing: -0.03em;
+    }
+    .budget-pct.safe { color: #10b981; }
+    .budget-pct.warn { color: #fbbf24; }
+    .budget-pct.danger { color: #f87171; }
+    .budget-pct-label {
+        text-align: center;
+        font-size: 10px;
+        color: #4e4e62;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 10px;
+    }
 
     /* Power indicator */
     .power-info {
         background: rgba(255,255,255,0.025);
         border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 10px;
-        padding: 12px 16px;
+        border-radius: 12px;
+        padding: 14px 16px;
         margin: 8px 0;
         font-size: 12px;
         color: #8c8ca0;
+        transition: all 0.3s ease;
+    }
+    .power-info:hover {
+        border-color: rgba(255,255,255,0.1);
     }
     .power-info strong { color: #ebebec; }
     .power-info .accent { color: #10b981; font-weight: 700; }
+    .power-mode-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .power-mode-badge .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .power-mode-badge.eco { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); color: #06b6d4; }
+    .power-mode-badge.eco .dot { background: #06b6d4; box-shadow: 0 0 6px rgba(6,182,212,0.5); }
+    .power-mode-badge.balance { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); color: #8b5cf6; }
+    .power-mode-badge.balance .dot { background: #8b5cf6; box-shadow: 0 0 6px rgba(139,92,246,0.5); }
+    .power-mode-badge.max { background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.2); color: #f43f5e; }
+    .power-mode-badge.max .dot { background: #f43f5e; box-shadow: 0 0 6px rgba(244,63,94,0.5); }
+    .power-model-info {
+        font-size: 11px;
+        color: #6b6b80;
+        margin-top: 6px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,0.04);
+        line-height: 1.6;
+    }
+    .power-model-info code {
+        background: rgba(255,255,255,0.05);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        color: #9494a8;
+    }
 
     /* Custom input styling */
     [data-testid="stNumberInput"] input {
@@ -209,7 +318,16 @@ groq_client, gemini_client = get_clients()
 with st.sidebar:
     st.markdown("### ⚙ Настройки шлюза")
     
-    st.markdown("##### Лимит бюджета")
+    # --- BUDGET CARD ---
+    st.markdown("""
+    <div class="sidebar-card">
+        <div class="sidebar-card-title">
+            <div class="icon green">💰</div>
+            Лимит бюджета
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     budget_col1, budget_col2 = st.columns([2, 1])
     with budget_col1:
         budget_slider = st.slider(
@@ -230,12 +348,19 @@ with st.sidebar:
     spent = st.session_state.total_spent
     pct = min(100, (spent / budget_limit) * 100) if budget_limit > 0 else 0
     bar_class = "safe" if pct < 70 else ("warn" if pct < 90 else "danger")
+    remaining = max(0, budget_limit - spent)
+    
     st.markdown(f"""
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#8888a8;">
-        <span>Потрачено: <strong style="color:#e2e2f0;">${spent:.2f}</strong></span>
-        <span>Лимит: <strong style="color:#10b981;">${budget_limit:,}</strong></span>
-    </div>
+    <div class="budget-pct {bar_class}">{pct:.0f}%</div>
+    <div class="budget-pct-label">использовано</div>
     <div class="budget-bar"><div class="budget-fill {bar_class}" style="width:{pct:.1f}%;"></div></div>
+    <div class="budget-stats">
+        <span>Потрачено: <strong style="color:#e2e2f0;">${spent:.2f}</strong></span>
+        <span>Осталось: <strong style="color:#10b981;">${remaining:,.2f}</strong></span>
+    </div>
+    <div class="budget-stats" style="margin-top:6px;">
+        <span>Лимит: <strong style="color:#9494a8;">${budget_limit:,}</strong></span>
+    </div>
     """, unsafe_allow_html=True)
     
     if pct >= 80:
@@ -243,7 +368,16 @@ with st.sidebar:
     
     st.divider()
     
-    st.markdown("##### Мощность / Экономия")
+    # --- POWER CARD ---
+    st.markdown("""
+    <div class="sidebar-card">
+        <div class="sidebar-card-title">
+            <div class="icon purple">⚡</div>
+            Мощность / Экономия
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     power_level = st.slider(
         "Баланс мощности",
         min_value=10, max_value=100, value=50, step=10,
@@ -255,19 +389,34 @@ with st.sidebar:
         power_mode = "Экономия"
         power_desc = "Groq Llama — бесплатная модель, $0"
         power_color = "#06b6d4"
+        power_badge = "eco"
+        power_icon = "🌿"
+        power_models = "Все запросы → <code>llama-3.1-8b-instant</code> (Groq, бесплатно)"
     elif power_level <= 70:
         power_mode = "Баланс"
-        power_desc = "EASY → Llama, HARD → Gemini"
+        power_desc = "Умная маршрутизация: простые → Llama, сложные → Gemini"
         power_color = "#8b5cf6"
+        power_badge = "balance"
+        power_icon = "⚖️"
+        power_models = "EASY → <code>llama-3.1-8b</code> · HARD → <code>gemini-1.5-flash</code>"
     else:
         power_mode = "Макс. мощность"
-        power_desc = "Все → Google Gemini 1.5 Flash"
+        power_desc = "Максимальное качество через Google Gemini"
         power_color = "#f43f5e"
+        power_badge = "max"
+        power_icon = "🚀"
+        power_models = "Все запросы → <code>gemini-1.5-flash</code> (Google)"
     
     st.markdown(f"""
     <div class="power-info">
-        <strong style="color:{power_color};">{power_mode}</strong> · {power_level}%<br>
-        {power_desc}
+        <div class="power-mode-badge {power_badge}">
+            <span class="dot"></span>
+            {power_icon} {power_mode} · {power_level}%
+        </div>
+        <div style="font-size:12px; color:#9494a8; margin-top:4px;">{power_desc}</div>
+        <div class="power-model-info">
+            {power_models}
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -320,7 +469,7 @@ st.markdown("""
     <div class="eco-badge">Live Demo — Multi-Vendor LLM Gateway</div>
     <h1>EcoRouter AI</h1>
     <p>Мульти-вендорный шлюз: Meta Llama (Groq) + Google Gemini. Система маршрутизирует каждый запрос в оптимальную модель за 0.1 секунды.</p>
-    <a href="http://localhost:3000" target="_blank" class="eco-link">
+    <a href="https://ecorouter-ai.pages.dev" target="_blank" class="eco-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         Открыть сайт EcoRouter
     </a>
