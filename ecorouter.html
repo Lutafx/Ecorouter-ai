@@ -1,0 +1,251 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+  ECOROUTER AI — COMPLETE WEBSITE CODE REFERENCE
+  All files combined for documentation
+═══════════════════════════════════════════════════════════════════════════════
+
+FILES INCLUDED:
+1. HTML Pages: index.html, dashboard.html, login.html, register.html, pricing.html, audit.html, model-selector-demo.html
+2. CSS: shared.css, style.css, hero-styles.css, quality-controls.css, win-win-pricing.css
+3. JavaScript: script.js
+
+DESIGN SYSTEM:
+- Accent: #10b981 (emerald)
+- Background: #08080c
+- Card bg: rgba(255,255,255,0.033)
+- Border: rgba(255,255,255,0.072)
+- Text: #ebebec / #8c8ca0 / #4e4e62
+- Gold: #fbbf24, Red: #f87171, Blue: #60a5fa
+
+SERVER: Node.js/Express on port 3000
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoRouter AI — Code Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080c;--bgc:rgba(255,255,255,.033);--brd:rgba(255,255,255,.072);--brdh:rgba(255,255,255,.14);--tx:#ebebec;--t2:#8c8ca0;--t3:#4e4e62;--ac:#10b981;--as:rgba(16,185,129,.08);--ab:rgba(16,185,129,.2);--gd:#fbbf24;--bl:#60a5fa;--rd:#f87171;--r:12px;--rs:8px}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;padding:40px 24px;max-width:1200px;margin:0 auto}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--brd)}
+.logo{width:32px;height:32px;background:var(--ac);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#000}
+h1{font-size:24px;font-weight:700}
+.subtitle{color:var(--t2);font-size:14px;margin-left:auto}
+.section{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
+.section-header{background:rgba(255,255,255,.02);padding:14px 20px;border-bottom:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center}
+.file-name{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ac);font-weight:600}
+.file-type{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.section-content{padding:16px 20px;font-size:13px;color:var(--t2);line-height:1.6}
+.section-content code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--rs);padding:16px}
+.card-title{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.card-list{font-size:12px;color:var(--t2);line-height:1.8}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-right:4px;margin-bottom:4px}
+.tag-html{background:rgba(248,113,113,.1);color:var(--rd)}
+.tag-css{background:rgba(96,165,250,.1);color:var(--bl)}
+.tag-js{background:rgba(251,191,36,.1);color:var(--gd)}
+a{color:var(--ac);text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">E</div>
+    <h1>EcoRouter AI</h1>
+    <span class="subtitle">Complete Code Reference</span>
+</div>
+
+<h2 style="font-size:16px;margin-bottom:16px;color:var(--t2)">HTML Pages</h2>
+<div class="grid">
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> index.html</div>
+        <div class="card-list">
+            Landing page with particle background<br>
+            Hero, How it works (4 steps)<br>
+            Model ecosystem (12+ AI providers)<br>
+            Interactive routing demo
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> dashboard.html</div>
+        <div class="card-list">
+            Auth-protected dashboard<br>
+            Stats cards, Charts (Chart.js)<br>
+            ESG rating, Recent requests<br>
+            Test API modal
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> login.html</div>
+        <div class="card-list">
+            Email/password login<br>
+            Session persistence<br>
+            Redirect handling<br>
+            Welcome view for auth users
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> register.html</div>
+        <div class="card-list">
+            Company info form<br>
+            Quality preference selector<br>
+            100+ countries dropdown<br>
+            API key generation
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> pricing.html</div>
+        <div class="card-list">
+            Win-Win pricing model<br>
+            5 plan tiers (Free→Enterprise)<br>
+            Savings calculator<br>
+            Feature comparison table
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> audit.html</div>
+        <div class="card-list">
+            Waste calculator<br>
+            Before/After comparison<br>
+            Environmental equivalents<br>
+            Savings visualization
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-html">HTML</span> model-selector-demo.html</div>
+        <div class="card-list">
+            Live routing demo<br>
+            Model selection UI<br>
+            Real API / Classifier toggles<br>
+            Example prompts
+        </div>
+    </div>
+</div>
+
+<h2 style="font-size:16px;margin-bottom:16px;color:var(--t2)">CSS Stylesheets</h2>
+<div class="grid">
+    <div class="card">
+        <div class="card-title"><span class="tag tag-css">CSS</span> shared.css</div>
+        <div class="card-list">
+            Design System v3<br>
+            Nav, Cards, Inputs, Buttons<br>
+            Toggles, Chips, Alerts<br>
+            Animations, Footer
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-css">CSS</span> style.css</div>
+        <div class="card-list">
+            Dashboard-specific styles<br>
+            Stats grid, Charts<br>
+            ESG section, Table<br>
+            Modal, Code block
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-css">CSS</span> hero-styles.css</div>
+        <div class="card-list">
+            Hero banner layout<br>
+            Pulse ring animation<br>
+            Gradient text<br>
+            Comparison section
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-css">CSS</span> quality-controls.css</div>
+        <div class="card-list">
+            Quality mode selector<br>
+            Eco/Smart/Precision modes<br>
+            Slider styles
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="tag tag-css">CSS</span> win-win-pricing.css</div>
+        <div class="card-list">
+            Pricing comparison<br>
+            Savings calculator<br>
+            Trust badges<br>
+            Guarantee box
+        </div>
+    </div>
+</div>
+
+<h2 style="font-size:16px;margin-bottom:16px;color:var(--t2)">JavaScript</h2>
+<div class="grid">
+    <div class="card">
+        <div class="card-title"><span class="tag tag-js">JS</span> script.js</div>
+        <div class="card-list">
+            Dashboard logic<br>
+            <code>refreshStats()</code> — fetch data<br>
+            <code>updateModelChart()</code> — Chart.js<br>
+            <code>sendTestRequest()</code> — API test<br>
+            <code>downloadReport()</code> — ESG report
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <span class="file-name">Design System Variables</span>
+        <span class="file-type">CSS :root</span>
+    </div>
+    <div class="section-content">
+        <strong>Colors:</strong><br>
+        <code>--bg: #08080c</code> (background)<br>
+        <code>--accent: #10b981</code> (emerald green)<br>
+        <code>--text: #ebebec</code> / <code>--text-2: #8c8ca0</code> / <code>--text-3: #4e4e62</code><br>
+        <code>--gold: #fbbf24</code> / <code>--red: #f87171</code> / <code>--blue: #60a5fa</code><br><br>
+        <strong>Borders:</strong><br>
+        <code>--border: rgba(255,255,255,0.072)</code><br>
+        <code>--border-hover: rgba(255,255,255,0.14)</code><br><br>
+        <strong>Radius:</strong> <code>--r: 10px</code> / <code>--r-sm: 8px</code>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <span class="file-name">API Endpoints</span>
+        <span class="file-type">Server Routes</span>
+    </div>
+    <div class="section-content">
+        <code>POST /api/auth/register</code> — Create account<br>
+        <code>POST /api/auth/login</code> — Sign in<br>
+        <code>GET /api/auth/me</code> — Current user<br>
+        <code>POST /api/auth/select-plan</code> — Change plan<br>
+        <code>GET /api/stats</code> — Dashboard stats<br>
+        <code>GET /api/stats/hourly</code> — Time series data<br>
+        <code>GET /api/report</code> — ESG report<br>
+        <code>POST /v1/chat/demo</code> — Test routing (demo key: <code>eco-demo-key-2026</code>)
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <span class="file-name">File Locations</span>
+        <span class="file-type">Project Structure</span>
+    </div>
+    <div class="section-content">
+        <code>c:\Users\malik\CascadeProjects\ecorouter-ai\</code><br>
+        ├── <code>server.js</code> — Express server (port 3000)<br>
+        ├── <code>routes/auth.js</code> — Auth routes<br>
+        ├── <code>middleware/qualityGate.js</code> — Quality gate logic<br>
+        └── <code>public/</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── HTML files (7 pages)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── CSS files (5 stylesheets)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── <code>script.js</code>
+    </div>
+</div>
+
+<footer style="margin-top:40px;padding-top:20px;border-top:1px solid var(--brd);text-align:center;color:var(--t3);font-size:12px">
+    EcoRouter AI — Smart routing for sustainable AI<br>
+    <a href="/dashboard.html" style="margin-top:8px;display:inline-block">Open Dashboard</a>
+</footer>
+
+</body>
+</html>

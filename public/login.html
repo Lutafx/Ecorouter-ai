@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — EcoRouter AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/shared.css">
+    <style>
+        .welcome-view { display: none; text-align: center; padding: 32px 0; animation: fadeSlide 0.35s var(--ease) both; }
+        .welcome-view h2 { font-size: 22px; font-weight: 750; margin-bottom: 6px; }
+        .welcome-view .sub { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
+        .info-table { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; margin-bottom: 20px; text-align: left; }
+        .info-row { font-size: 13px; padding: 5px 0; display: flex; justify-content: space-between; }
+        .info-row + .info-row { border-top: 1px solid var(--border); }
+        .info-key { color: var(--text-3); }
+        .info-val { color: var(--text); font-weight: 500; }
+        .actions-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .sign-out-link { display: inline-block; margin-top: 16px; font-size: 12px; color: var(--text-3); text-decoration: underline; cursor: pointer; transition: color var(--dur) var(--ease); }
+        .sign-out-link:hover { color: var(--text-2); }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">E</div> EcoRouter AI</a>
+    <div class="nav-center">
+        <a href="/dashboard.html" class="nav-link">Dashboard</a>
+        <a href="/model-selector-demo.html" class="nav-link">Demo</a>
+        <a href="/pricing.html" class="nav-link">Pricing</a>
+    </div>
+    <div class="nav-right">
+        <a href="/register.html" class="nav-btn-primary">Sign up</a>
+    </div>
+</nav>
+
+<div class="page page-sm">
+
+    <div id="loginView">
+        <header class="hero-center fade-in">
+            <div class="nav-logo-icon" style="width:40px;height:40px;border-radius:10px;font-size:18px;margin:0 auto 16px;">E</div>
+            <h1 class="page-title" style="font-size:26px;">Welcome back</h1>
+            <p class="page-desc center" style="font-size:14px;">Sign in to your EcoRouter AI account</p>
+        </header>
+
+        <div class="card fade-in fade-in-d1">
+            <form onsubmit="handleLogin(event)">
+                <div class="field" style="margin-bottom:14px;">
+                    <label class="field-label">Work email</label>
+                    <input type="email" class="input" id="email" placeholder="you@company.com" required autofocus>
+                </div>
+                <div class="field" style="margin-bottom:14px;">
+                    <label class="field-label">Password</label>
+                    <input type="password" class="input" id="password" placeholder="Your password" required>
+                </div>
+                <button type="submit" class="btn-primary full" id="submitBtn" style="margin-top:6px;">Sign in</button>
+            </form>
+            <div class="alert-error" id="errorMsg"></div>
+        </div>
+
+        <div class="form-link">Don't have an account? <a href="/register.html">Create one for free</a></div>
+    </div>
+
+    <div class="welcome-view" id="welcomeView" style="padding-bottom:0;">
+        <h2 id="welcomeName">Welcome back</h2>
+        <p class="sub">You're signed in. Here's your account info:</p>
+        <div class="info-table">
+            <div class="info-row"><span class="info-key">Company</span><span class="info-val" id="infoCompany">—</span></div>
+            <div class="info-row"><span class="info-key">Plan</span><span class="info-val" id="infoPlan">—</span></div>
+            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="infoEmail">—</span></div>
+        </div>
+        <div class="actions-row">
+            <a href="/pricing.html" class="btn-primary">Manage plan</a>
+            <a href="/dashboard.html" class="btn-outline">Dashboard</a>
+        </div>
+        <a class="sign-out-link" onclick="logout()">Sign out</a>
+    </div>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 EcoRouter AI</span>
+        <div class="site-footer-links">
+            <a href="/pricing.html">Pricing</a>
+            <a href="/audit.html">Free audit</a>
+            <a href="/register.html">Sign up</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+window.addEventListener('load', () => {
+    const token = localStorage.getItem('eco_token');
+    if (token) checkSession(token);
+});
+
+async function checkSession(token) {
+    try {
+        const res = await fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } });
+        if (res.ok) { const data = await res.json(); showWelcome(data.user); }
+    } catch {}
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const errEl = document.getElementById('errorMsg');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        localStorage.setItem('eco_token', data.token);
+        localStorage.setItem('eco_user', JSON.stringify(data.user));
+
+        const pendingPlan = sessionStorage.getItem('pending_plan');
+        if (pendingPlan) {
+            sessionStorage.removeItem('pending_plan');
+            window.location.href = '/pricing.html?plan=' + pendingPlan;
+            return;
+        }
+        // Redirect to dashboard after login
+        const redirect = new URLSearchParams(window.location.search).get('redirect');
+        if (redirect === 'dashboard') {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+        showWelcome(data.user);
+    } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign in';
+    }
+}
+
+function showWelcome(user) {
+    document.getElementById('loginView').style.display = 'none';
+    const wv = document.getElementById('welcomeView');
+    wv.style.display = 'block';
+    document.getElementById('welcomeName').textContent = 'Welcome, ' + user.contactName;
+    document.getElementById('infoCompany').textContent = user.companyName;
+    document.getElementById('infoPlan').textContent = (user.plan || 'free').charAt(0).toUpperCase() + (user.plan || 'free').slice(1);
+    document.getElementById('infoEmail').textContent = user.email;
+}
+
+function logout() {
+    localStorage.removeItem('eco_token');
+    localStorage.removeItem('eco_user');
+    localStorage.removeItem('eco_api_key');
+    window.location.reload();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Audit — EcoRouter AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/shared.css">
+    <style>
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .calc-label { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+
+        .waste-card { background: var(--bg-card); border: 1px solid rgba(251,113,133,0.18); border-radius: var(--r); padding: 28px; margin-bottom: 16px; animation: fadeSlide 0.35s var(--ease) both; }
+        .waste-head { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; margin-bottom: 24px; }
+        .waste-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .waste-item { text-align: center; }
+        .waste-val { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; color: var(--red); margin-bottom: 4px; }
+        .waste-sub { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+
+        .cmp-wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px; margin-bottom: 16px; animation: fadeSlide 0.35s var(--ease) 0.06s both; }
+        .cmp-side { display: flex; flex-direction: column; gap: 6px; }
+        .cmp-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .cmp-head.bad { color: var(--red); }
+        .cmp-head.good { color: var(--accent); }
+        .cmp-stat { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+        .cmp-stat:last-child { border: none; }
+        .cmp-key { color: var(--text-2); }
+        .cmp-val { font-weight: 600; }
+        .cmp-val.bad { color: var(--red); }
+        .cmp-val.good { color: var(--accent); }
+        .cmp-arrow { color: var(--accent); font-size: 16px; }
+
+        .savings-card { background: var(--bg-card); border: 1px solid var(--accent-border); border-radius: var(--r); padding: 28px; animation: fadeSlide 0.35s var(--ease) 0.12s both; }
+        .savings-head { font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 24px; }
+        .savings-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+        .sav-item { background: rgba(0,0,0,0.15); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 18px 10px; text-align: center; transition: all var(--dur) var(--ease); }
+        .sav-item:hover { border-color: var(--border-accent); transform: translateY(-1px); }
+        .sav-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+        .sav-val { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; margin-bottom: 2px; }
+        .sav-sub { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+
+        @media(max-width:700px) {
+            .calc-grid, .waste-grid, .savings-grid { grid-template-columns: 1fr; }
+            .cmp-wrap { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">E</div> EcoRouter AI</a>
+    <div class="nav-center">
+        <a href="/dashboard.html" class="nav-link">Dashboard</a>
+        <a href="/model-selector-demo.html" class="nav-link">Demo</a>
+        <a href="/audit.html" class="nav-link active">Audit</a>
+        <a href="/pricing.html" class="nav-link">Pricing</a>
+    </div>
+    <div class="nav-right">
+        <a href="/login.html" class="nav-btn" id="navAuth">Sign in</a>
+        <a href="/register.html" class="nav-btn-primary" id="navAction">Get started</a>
+    </div>
+</nav>
+
+<div class="page" style="max-width:900px;">
+
+    <header class="hero-center fade-in">
+        <div class="section-label red">Free audit</div>
+        <h1 class="page-title">You're burning money on <span style="color:var(--red)">oversized AI</span></h1>
+        <p class="page-desc center">Enter your usage stats. See exactly how much CO2 and money you waste every month — and how EcoRouter fixes it.</p>
+    </header>
+
+    <div class="card fade-in fade-in-d1" style="margin-bottom:20px;">
+        <div class="card-title">Calculate your monthly waste</div>
+        <div class="calc-grid">
+            <div>
+                <div class="calc-label">Monthly AI requests</div>
+                <input type="number" class="input" id="monthlyRequests" value="100000" placeholder="e.g. 100,000">
+            </div>
+            <div>
+                <div class="calc-label">Primary model used</div>
+                <select class="input" id="primaryModel">
+                    <option value="gpt-4">GPT-4 — $0.030/1K tokens</option>
+                    <option value="gpt-4o">GPT-4o — $0.005/1K tokens</option>
+                    <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo — $0.002/1K tokens</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-primary red full" onclick="calculateWaste()">Show my waste</button>
+    </div>
+
+    <div id="wasteSection" style="display:none">
+
+        <div class="waste-card">
+            <div class="waste-head">Your monthly waste — money that could stay in your budget</div>
+            <div class="waste-grid">
+                <div class="waste-item"><div class="waste-val" id="wastedMoney">$0</div><div class="waste-sub">Wasted money</div></div>
+                <div class="waste-item"><div class="waste-val" id="wastedCO2">0kg</div><div class="waste-sub">Excess CO2</div></div>
+                <div class="waste-item"><div class="waste-val" id="wastedWater">0L</div><div class="waste-sub">Wasted water</div></div>
+            </div>
+        </div>
+
+        <div class="cmp-wrap">
+            <div class="cmp-side">
+                <div class="cmp-head bad">Without EcoRouter</div>
+                <div class="cmp-stat"><span class="cmp-key">Monthly cost</span><span class="cmp-val bad" id="currentCost">—</span></div>
+                <div class="cmp-stat"><span class="cmp-key">CO2 emitted</span><span class="cmp-val bad" id="currentCO2">—</span></div>
+                <div class="cmp-stat"><span class="cmp-key">Water used</span><span class="cmp-val bad" id="currentWater">—</span></div>
+            </div>
+            <div class="cmp-arrow">→</div>
+            <div class="cmp-side">
+                <div class="cmp-head good">With EcoRouter</div>
+                <div class="cmp-stat"><span class="cmp-key">Monthly cost</span><span class="cmp-val good" id="optimizedCost">—</span></div>
+                <div class="cmp-stat"><span class="cmp-key">CO2 emitted</span><span class="cmp-val good" id="optimizedCO2">—</span></div>
+                <div class="cmp-stat"><span class="cmp-key">Water used</span><span class="cmp-val good" id="optimizedWater">—</span></div>
+            </div>
+        </div>
+
+        <div class="savings-card">
+            <div class="savings-head">What you get back every month</div>
+            <div class="savings-grid">
+                <div class="sav-item"><div class="sav-label">Money</div><div class="sav-val" id="saveMoney">$0</div><div class="sav-sub">Saved / mo</div></div>
+                <div class="sav-item"><div class="sav-label">Trees</div><div class="sav-val" id="saveTrees">0</div><div class="sav-sub">Equivalent</div></div>
+                <div class="sav-item"><div class="sav-label">Driving</div><div class="sav-val" id="saveCarKm">0km</div><div class="sav-sub">Car avoided</div></div>
+                <div class="sav-item"><div class="sav-label">Energy</div><div class="sav-val" id="savePhones">0</div><div class="sav-sub">Phone charges</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cta-box" style="margin-top:32px;">
+        <h2 class="cta-title">Ready to stop the waste?</h2>
+        <p class="cta-desc">Takes 30 seconds to integrate. No credit card required.</p>
+        <div class="cta-actions">
+            <a href="/pricing.html" class="btn-primary">View plans</a>
+            <a href="/model-selector-demo.html" class="btn-outline">See live demo</a>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 EcoRouter AI</span>
+        <div class="site-footer-links">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/pricing.html">Pricing</a>
+            <a href="/register.html">Sign up</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    const MODELS = {
+        'gpt-4':         { cost: 0.030, co2: 4.32,  water: 0.500 },
+        'gpt-4o':        { cost: 0.005, co2: 2.10,  water: 0.250 },
+        'gpt-3.5-turbo': { cost: 0.002, co2: 0.43,  water: 0.050 }
+    };
+
+    function countUp(el, target, suffix, dur = 650) {
+        const start = performance.now(), from = parseFloat(el.textContent) || 0;
+        (function tick(now) {
+            const p = Math.min((now - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+            el.textContent = (Number.isInteger(target) ? Math.round(from + (target - from) * e) : (from + (target - from) * e).toFixed(1)) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+        })(start);
+    }
+
+    function calculateWaste() {
+        const requests = parseInt(document.getElementById('monthlyRequests').value) || 0;
+        const model = document.getElementById('primaryModel').value;
+        if (!requests) return;
+
+        const m = (requests * 500) / 1000, src = MODELS[model];
+        const curCost = src.cost * m, curCO2 = src.co2 * requests / 1000, curWater = src.water * requests / 1000;
+        const optCost = curCost * 0.30, optCO2 = curCO2 * 0.30, optWater = curWater * 0.30;
+        const saveMoney = curCost - optCost, saveCO2 = curCO2 - optCO2, saveWater = curWater - optWater;
+
+        document.getElementById('wasteSection').style.display = 'block';
+        document.getElementById('wasteSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(() => {
+            document.getElementById('wastedMoney').textContent = '$' + saveMoney.toFixed(0);
+            countUp(document.getElementById('wastedCO2'), saveCO2, 'kg');
+            countUp(document.getElementById('wastedWater'), saveWater, 'L');
+            document.getElementById('currentCost').textContent = '$' + curCost.toFixed(0);
+            document.getElementById('currentCO2').textContent = curCO2.toFixed(1) + 'kg';
+            document.getElementById('currentWater').textContent = curWater.toFixed(1) + 'L';
+            document.getElementById('optimizedCost').textContent = '$' + optCost.toFixed(0);
+            document.getElementById('optimizedCO2').textContent = optCO2.toFixed(1) + 'kg';
+            document.getElementById('optimizedWater').textContent = optWater.toFixed(1) + 'L';
+            document.getElementById('saveMoney').textContent = '$' + saveMoney.toFixed(0);
+            document.getElementById('saveTrees').textContent = (saveCO2 / 22).toFixed(2);
+            document.getElementById('saveCarKm').textContent = (saveCO2 * 1000 / 120).toFixed(0) + 'km';
+            document.getElementById('savePhones').textContent = Math.round(saveCO2 * 1000 / 8.22);
+        }, 150);
+    }
+
+    (function initNav() {
+        const user = JSON.parse(localStorage.getItem('eco_user') || 'null');
+        if (user) {
+            const a = document.getElementById('navAction');
+            if (a) { a.textContent = user.contactName || 'Account'; a.href = '/login.html'; }
+            const b = document.getElementById('navAuth');
+            if (b) b.style.display = 'none';
+        }
+    })();
+
+    window.addEventListener('load', () => setTimeout(calculateWaste, 400));
+</script>
+</body>
+</html>

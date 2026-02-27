@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — EcoRouter AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hero-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/dashboard.html" class="logo">
+                <div class="logo-mark">E</div>
+                <span class="logo-text">EcoRouter</span>
+            </a>
+            <span class="badge">Live</span>
+        </div>
+        <nav class="header-nav">
+            <a href="/model-selector-demo.html" class="hnav-link">Demo</a>
+            <a href="/audit.html" class="hnav-link">Audit</a>
+            <a href="/pricing.html" class="hnav-link">Pricing</a>
+        </nav>
+        <div class="header-right">
+            <button class="btn btn-outline" onclick="refreshStats()">Refresh</button>
+            <button class="btn btn-primary" onclick="openTestModal()">Test API</button>
+            <a href="/register.html" class="btn btn-outline" id="navReg">Get started</a>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="hero-content">
+            <h1 class="hero-title">Making AI <span class="gradient-text">Greener</span></h1>
+            <p class="hero-subtitle">Automatically route AI requests to optimal models. Save 60-80% energy, CO₂, and costs.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="heroRequests">0</div>
+                    <div class="hero-stat-label">Requests Optimized</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="heroCO2">0kg</div>
+                    <div class="hero-stat-label">CO₂ Saved</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="heroMoney">$0</div>
+                    <div class="hero-stat-label">Money Saved</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring delay-1"></div>
+            <div class="pulse-ring delay-2"></div>
+            <div class="hero-center-mark">E</div>
+        </div>
+    </section>
+
+    <!-- Stats Cards -->
+    <section class="stats-grid">
+        <div class="stat-card green">
+            <div class="stat-dot"></div>
+            <div class="stat-content">
+                <div class="stat-value" id="totalRequests">0</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+        </div>
+        <div class="stat-card emerald">
+            <div class="stat-dot"></div>
+            <div class="stat-content">
+                <div class="stat-value" id="co2Saved">0g</div>
+                <div class="stat-label">CO₂ Saved</div>
+            </div>
+        </div>
+        <div class="stat-card blue">
+            <div class="stat-dot"></div>
+            <div class="stat-content">
+                <div class="stat-value" id="waterSaved">0ml</div>
+                <div class="stat-label">Water Saved</div>
+            </div>
+        </div>
+        <div class="stat-card gold">
+            <div class="stat-dot"></div>
+            <div class="stat-content">
+                <div class="stat-value" id="moneySaved">$0</div>
+                <div class="stat-label">Money Saved</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eco Equivalents -->
+    <section class="equivalents-bar" id="equivalentsBar">
+        <div class="eq-item"><span id="eqTrees">0</span> trees equivalent</div>
+        <div class="eq-item"><span id="eqCar">0</span> km car avoided</div>
+        <div class="eq-item"><span id="eqPhone">0</span> phone charges</div>
+        <div class="eq-item"><span id="eqBulb">0</span> h lightbulb saved</div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="charts-grid">
+        <div class="chart-card">
+            <h3>Model Distribution</h3>
+            <canvas id="modelChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Complexity Breakdown</h3>
+            <canvas id="complexityChart"></canvas>
+        </div>
+        <div class="chart-card wide">
+            <h3>Savings Over Time</h3>
+            <canvas id="timeChart"></canvas>
+        </div>
+    </section>
+
+    <!-- ESG Rating -->
+    <section class="esg-section">
+        <div class="esg-card">
+            <h3>ESG Green AI Rating</h3>
+            <div class="esg-grade" id="esgGrade">N/A</div>
+            <div class="esg-label" id="esgLabel">Send requests to get rated</div>
+            <button class="btn btn-outline" onclick="downloadReport()">Download ESG Report</button>
+        </div>
+        <div class="esg-card">
+            <h3>Reduction</h3>
+            <div class="reduction-circle">
+                <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="#10b981" stroke-width="8"
+                        stroke-dasharray="339.292" stroke-dashoffset="339.292" id="reductionCircle"
+                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="reduction-text" id="reductionPercent">0%</div>
+            </div>
+            <div class="esg-label">Average CO₂ Reduction</div>
+        </div>
+    </section>
+
+    <!-- Recent Requests -->
+    <section class="recent-section">
+        <h3>Recent Requests</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Time</th>
+                        <th>Original</th>
+                        <th>Routed To</th>
+                        <th>Complexity</th>
+                        <th>CO₂ Saved</th>
+                        <th>$ Saved</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsTable">
+                    <tr><td colspan="7" class="empty">No requests yet. Use the Test API button to try it out!</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- API Info -->
+    <section class="api-section">
+        <h3>Quick Start</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <span>Replace your OpenAI endpoint</span>
+                <button class="copy-btn" onclick="copyCode()">Copy</button>
+            </div>
+            <pre><code id="codeSnippet">// Before (OpenAI direct):
+const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  headers: { 'Authorization': 'Bearer sk-...' },
+  body: JSON.stringify({ model: 'gpt-4', messages: [...] })
+});
+
+// After (EcoRouter — just change the URL):
+const response = await fetch('<span class="highlight">{YOUR_ECOROUTER_URL}</span>/v1/chat/completions', {
+  headers: { 'Authorization': 'Bearer eco-demo-key-2026' },
+  body: JSON.stringify({ messages: [...] })  // model is auto-selected!
+});</code></pre>
+        </div>
+    </section>
+
+    <!-- Test API Modal -->
+    <div class="modal-overlay" id="testModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Test EcoRouter API</h3>
+                <button class="close-btn" onclick="closeTestModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Your message:</label>
+                <textarea id="testMessage" rows="3" placeholder="e.g. Translate 'hello' to Russian">Translate the word 'hello' to Russian</textarea>
+                <label>Requested model (what you'd normally use):</label>
+                <select id="testModel">
+                    <option value="gpt-4">GPT-4 (expensive)</option>
+                    <option value="gpt-4o">GPT-4o (medium)</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (cheap)</option>
+                </select>
+                <button class="btn btn-primary full-width" onclick="sendTestRequest()" id="testBtn">
+                    Send Request
+                </button>
+                <div class="test-result" id="testResult" style="display:none">
+                    <div class="result-header">Result:</div>
+                    <div id="testResultContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>EcoRouter AI &mdash; Smart routing for sustainable AI</p>
+        <p><a href="/pricing.html" style="color:var(--accent);text-decoration:none;">View pricing</a> &middot; <a href="/audit.html" style="color:var(--text-2);text-decoration:none;">Free audit</a> &middot; <a href="/register.html" style="color:var(--text-2);text-decoration:none;">Get started</a></p>
+    </footer>
+
+    <script>
+    // Auth guard — redirect to login if not authenticated
+    (function() {
+        const user = JSON.parse(localStorage.getItem('eco_user') || 'null');
+        const token = localStorage.getItem('eco_token');
+        if (!user || !token) {
+            window.location.href = '/login.html?redirect=dashboard';
+            return;
+        }
+    })();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

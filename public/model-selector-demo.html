@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Demo — EcoRouter AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/shared.css">
+    <style>
+        .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+        .toggles-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+        textarea.demo-input {
+            width: 100%; min-height: 120px; resize: vertical;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--r-sm);
+            padding: 12px; color: var(--text); font-family: inherit; font-size: 14px; line-height: 1.6;
+            transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+        }
+        textarea.demo-input:focus { outline: none; border-color: var(--border-accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        textarea.demo-input::placeholder { color: var(--text-3); }
+
+        .model-list { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
+        .model-option {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border-radius: var(--r-sm);
+            border: 1px solid var(--border); cursor: pointer;
+            transition: all var(--dur) var(--ease); background: transparent;
+        }
+        .model-option:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
+        .model-option.active { border-color: var(--border-accent); background: var(--accent-soft); }
+        .model-radio { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all var(--dur) var(--ease); }
+        .model-option.active .model-radio { border-color: var(--accent); background: var(--accent); }
+        .model-radio::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #000; opacity: 0; transition: opacity var(--dur) var(--ease); }
+        .model-option.active .model-radio::after { opacity: 1; }
+        .model-name { font-size: 13px; font-weight: 600; }
+        .model-desc { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+        .model-price { font-size: 11px; color: var(--gold); font-weight: 500; margin-left: auto; font-variant-numeric: tabular-nums; }
+
+        .result-idle { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 340px; gap: 10px; color: var(--text-3); }
+        .result-idle-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-3); }
+        .result-idle-text { font-size: 13px; text-align: center; line-height: 1.5; }
+
+        .result-box { animation: fadeSlide 0.3s var(--ease) both; }
+        .result-routing {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 12px; border-radius: var(--r-sm);
+            background: var(--accent-soft); border: 1px solid var(--accent-border);
+            margin-bottom: 14px;
+        }
+        .routing-from { font-size: 13px; color: var(--text-3); text-decoration: line-through; }
+        .routing-arrow { color: var(--accent); font-size: 12px; }
+        .routing-to { font-size: 13px; font-weight: 700; color: var(--accent); }
+        .reason-text { font-size: 12px; color: var(--text-3); margin-bottom: 16px; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .metric-widget {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--r-sm);
+            padding: 14px 10px; text-align: center; transition: border-color var(--dur) var(--ease);
+        }
+        .metric-widget:hover { border-color: var(--border-hover); }
+        .metric-val { font-size: 22px; font-weight: 750; color: var(--accent); margin-bottom: 2px; letter-spacing: -0.02em; }
+        .metric-lbl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .compare-wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 18px; border-radius: var(--r); background: var(--bg-card); border: 1px solid var(--border); animation: fadeSlide 0.3s var(--ease) 0.06s both; }
+        .cmp-side { display: flex; flex-direction: column; gap: 6px; }
+        .cmp-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .cmp-head.bad { color: var(--red); }
+        .cmp-head.good { color: var(--accent); }
+        .cmp-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+        .cmp-row:last-child { border: none; }
+        .cmp-key { color: var(--text-2); }
+        .cmp-val { font-weight: 600; }
+        .cmp-val.bad { color: var(--red); }
+        .cmp-val.good { color: var(--accent); }
+        .cmp-arrow { color: var(--accent); font-size: 16px; }
+
+        .examples-section { margin-top: 36px; }
+        .examples-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+        .examples-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+        .example-chip {
+            padding: 6px 12px; border-radius: var(--r-sm); font-size: 12px;
+            border: 1px solid var(--border); color: var(--text-2); cursor: pointer;
+            background: transparent; transition: all var(--dur) var(--ease); white-space: nowrap;
+        }
+        .example-chip:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card); }
+        .example-chip .pct { color: var(--accent); margin-left: 4px; font-weight: 600; }
+
+        @media (max-width: 700px) {
+            .demo-grid { grid-template-columns: 1fr; }
+            .compare-wrap { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="/" class="nav-logo"><div class="nav-logo-icon">E</div> EcoRouter AI</a>
+    <div class="nav-center">
+        <a href="/dashboard.html" class="nav-link">Dashboard</a>
+        <a href="/model-selector-demo.html" class="nav-link active">Demo</a>
+        <a href="/audit.html" class="nav-link">Audit</a>
+        <a href="/pricing.html" class="nav-link">Pricing</a>
+    </div>
+    <div class="nav-right">
+        <a href="/login.html" class="nav-btn" id="navAuth">Sign in</a>
+        <a href="/register.html" class="nav-btn-primary" id="navAction">Get started</a>
+    </div>
+</nav>
+
+<div class="page">
+
+    <header class="hero-center fade-in">
+        <div class="section-label">Live routing demo</div>
+        <h1 class="page-title">See how EcoRouter picks the <span class="hl">right model</span></h1>
+        <p class="page-desc center">Type any request. EcoRouter analyzes complexity and picks the most efficient model — saving CO₂ and cost without losing quality.</p>
+        <div class="toggles-row">
+            <div class="toggle-row" onclick="toggleMode()">
+                <div class="toggle-track" id="toggleSwitch"><div class="toggle-dot"></div></div>
+                <span class="toggle-label">Real API</span>
+                <span class="toggle-val" id="modeStatus">Off</span>
+            </div>
+            <div class="toggle-row" onclick="toggleClassifier()">
+                <div class="toggle-track on" id="classifierSwitch"><div class="toggle-dot"></div></div>
+                <span class="toggle-label">AI Classifier</span>
+                <span class="toggle-val on" id="classifierStatus">On</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="demo-grid">
+
+        <div class="card fade-in fade-in-d1">
+            <div class="card-title">Your request</div>
+            <textarea class="demo-input" id="userInput"
+                placeholder="e.g. Translate 'hello' to Russian&#10;e.g. Analyze sales data and find trends&#10;e.g. Summarize this article in 3 bullets"></textarea>
+
+            <div class="card-title" style="margin-top:16px;">Default model</div>
+            <div class="model-list" id="modelList">
+                <div class="model-option active" data-model="gpt-4" onclick="pickModel(this,'gpt-4')">
+                    <div class="model-radio"></div>
+                    <div><div class="model-name">GPT-4</div><div class="model-desc">Most powerful — people's default</div></div>
+                    <span class="model-price">$0.030/1K</span>
+                </div>
+                <div class="model-option" data-model="gpt-4o" onclick="pickModel(this,'gpt-4o')">
+                    <div class="model-radio"></div>
+                    <div><div class="model-name">GPT-4o</div><div class="model-desc">Fast, still expensive</div></div>
+                    <span class="model-price">$0.005/1K</span>
+                </div>
+                <div class="model-option" data-model="gpt-3.5-turbo" onclick="pickModel(this,'gpt-3.5-turbo')">
+                    <div class="model-radio"></div>
+                    <div><div class="model-name">GPT-3.5 Turbo</div><div class="model-desc">Budget choice for teams</div></div>
+                    <span class="model-price">$0.002/1K</span>
+                </div>
+            </div>
+
+            <button class="btn-primary full" id="analyzeBtn" onclick="runAnalysis()">Analyze with EcoRouter</button>
+        </div>
+
+        <div class="card fade-in fade-in-d2">
+            <div class="card-title">Routing decision</div>
+            <div id="outputArea">
+                <div class="result-idle">
+                    <div class="result-idle-icon">?</div>
+                    <div class="result-idle-text">Enter a request and click Analyze<br>to see the routing decision</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="compareSection" style="display:none; margin-bottom:14px;">
+        <div class="compare-wrap" id="compareCard"></div>
+    </div>
+
+    <div class="examples-section fade-in fade-in-d3">
+        <div class="examples-label">Try an example</div>
+        <div class="examples-wrap">
+            <div class="example-chip" onclick="useExample('Translate hello to Russian','gpt-4')">Translate text <span class="pct">-99%</span></div>
+            <div class="example-chip" onclick="useExample('Is this sentence positive or negative?','gpt-4')">Sentiment analysis <span class="pct">-99%</span></div>
+            <div class="example-chip" onclick="useExample('Summarize this article in 3 bullet points','gpt-4')">Summarize article <span class="pct">-90%</span></div>
+            <div class="example-chip" onclick="useExample('Write a short marketing email for product launch','gpt-4')">Marketing email <span class="pct">-90%</span></div>
+            <div class="example-chip" onclick="useExample('Analyze this dataset and identify key business insights and trends','gpt-4')">Analyze dataset <span class="pct">0%</span></div>
+            <div class="example-chip" onclick="useExample('Debug this Python code and explain the error','gpt-4')">Debug code <span class="pct">0%</span></div>
+            <div class="example-chip" onclick="useExample('Design a microservices architecture for an e-commerce platform','gpt-4')">Design architecture <span class="pct">0%</span></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 EcoRouter AI</span>
+        <div class="site-footer-links">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/pricing.html">Pricing</a>
+            <a href="/audit.html">Audit</a>
+            <a href="/register.html">Sign up</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    const MODELS = {
+        'gpt-4':         { cost: 0.030, co2: 4.32,  water: 0.500 },
+        'gpt-4o':        { cost: 0.005, co2: 2.10,  water: 0.250 },
+        'gpt-3.5-turbo': { cost: 0.002, co2: 0.43,  water: 0.050 },
+        'gpt-4o-mini':   { cost: 0.00015, co2: 0.05, water: 0.006 }
+    };
+    const COMPLEX = ['analyze','compare','debug','write code','design','architect','evaluate','research'];
+    const MEDIUM  = ['summarize','rewrite','explain','describe','list','write','create'];
+    const SIMPLE  = ['translate','classify','yes or no','true or false','positive or negative','sentiment'];
+
+    let selectedModel = 'gpt-4';
+    let useRealAPI = false;
+    let useAIClassifier = true;
+
+    function pickModel(el, model) {
+        document.querySelectorAll('.model-option').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        selectedModel = model;
+    }
+
+    function toggleMode() {
+        useRealAPI = !useRealAPI;
+        document.getElementById('toggleSwitch').classList.toggle('on', useRealAPI);
+        const st = document.getElementById('modeStatus');
+        st.textContent = useRealAPI ? 'On' : 'Off';
+        st.className = 'toggle-val' + (useRealAPI ? ' on' : '');
+    }
+
+    function toggleClassifier() {
+        useAIClassifier = !useAIClassifier;
+        document.getElementById('classifierSwitch').classList.toggle('on', useAIClassifier);
+        const st = document.getElementById('classifierStatus');
+        st.textContent = useAIClassifier ? 'On' : 'Off';
+        st.className = 'toggle-val' + (useAIClassifier ? ' on' : '');
+    }
+
+    function useExample(text, model) {
+        document.getElementById('userInput').value = text;
+        const card = document.querySelector(`[data-model="${model}"]`);
+        if (card) pickModel(card, model);
+        runAnalysis();
+    }
+
+    function route(message, requested) {
+        const lc = message.toLowerCase(), words = message.split(/\s+/).length;
+        if (words <= 10) return { model: 'gpt-4o-mini', reason: 'Very short message — lightweight model sufficient', complexity: 'simple' };
+        if (SIMPLE.some(k => lc.includes(k)))  return { model: 'gpt-4o-mini', reason: 'Simple task detected (translation/classification)', complexity: 'simple' };
+        if (COMPLEX.some(k => lc.includes(k))) return { model: requested, reason: 'Complex reasoning required — keeping requested model', complexity: 'complex' };
+        if (MEDIUM.some(k => lc.includes(k)))  return { model: 'gpt-3.5-turbo', reason: 'Medium complexity task detected', complexity: 'medium' };
+        if (words <= 30) return { model: 'gpt-4o-mini', reason: 'Short message — lightweight model sufficient', complexity: 'simple' };
+        if (words <= 100) return { model: 'gpt-3.5-turbo', reason: 'Medium-length message', complexity: 'medium' };
+        return { model: 'gpt-4o', reason: 'Long complex message — efficient heavy model', complexity: 'complex' };
+    }
+
+    function calcSavings(orig, routed, tokens = 800) {
+        const o = MODELS[orig] || MODELS['gpt-4'], r = MODELS[routed] || MODELS['gpt-3.5-turbo'], m = tokens / 1000;
+        return {
+            co2Saved: Math.max(0, (o.co2 - r.co2) * m),
+            waterSaved: Math.max(0, (o.water - r.water) * m),
+            moneySaved: Math.max(0, (o.cost - r.cost) * m),
+            pct: o.co2 > 0 ? Math.round(((o.co2 - r.co2) / o.co2) * 100) : 0
+        };
+    }
+
+    function countUp(el, target, suffix, dur = 700) {
+        const start = performance.now(), isFloat = target % 1 !== 0;
+        (function tick(now) {
+            const p = Math.min((now - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+            el.textContent = (isFloat ? (target * e).toFixed(3) : Math.round(target * e)) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+        })(start);
+    }
+
+    function showResult(r, sav, tokens) {
+        const chipCls = { simple: 'chip-simple', medium: 'chip-medium', complex: 'chip-complex' };
+        document.getElementById('outputArea').innerHTML = `
+            <div class="result-box">
+                <div class="result-routing">
+                    <span class="routing-from">${r.original}</span>
+                    <span class="routing-arrow">→</span>
+                    <span class="routing-to">${r.model}</span>
+                    <span class="chip ${chipCls[r.complexity]}" style="margin-left:auto">${r.complexity}</span>
+                </div>
+                <p class="reason-text">${r.reason}</p>
+                <div class="metrics-grid">
+                    <div class="metric-widget"><div class="metric-val" id="m-co2">0g</div><div class="metric-lbl">CO2 Saved</div></div>
+                    <div class="metric-widget"><div class="metric-val" id="m-water">0ml</div><div class="metric-lbl">Water Saved</div></div>
+                    <div class="metric-widget"><div class="metric-val" id="m-money">$0</div><div class="metric-lbl">Cost Saved</div></div>
+                </div>
+                <div style="text-align:center;margin-top:6px;">
+                    <span style="font-size:12px;color:var(--text-3)">~${tokens} tokens</span>
+                    <span style="font-size:12px;color:var(--accent);font-weight:600;margin-left:8px">${sav.pct}% reduction</span>
+                </div>
+            </div>`;
+        countUp(document.getElementById('m-co2'), sav.co2Saved, 'g');
+        countUp(document.getElementById('m-water'), sav.waterSaved, 'ml');
+        const mEl = document.getElementById('m-money'), st = performance.now();
+        (function tick(now) { const p = Math.min((now - st) / 700, 1); mEl.textContent = '$' + (sav.moneySaved * (1 - Math.pow(1 - p, 3))).toFixed(4); if (p < 1) requestAnimationFrame(tick); })(st);
+
+        const o = MODELS[r.original], ro = MODELS[r.model], m = tokens / 1000;
+        document.getElementById('compareCard').innerHTML = `
+            <div class="cmp-side"><div class="cmp-head bad">Without EcoRouter</div>
+                <div class="cmp-row"><span class="cmp-key">Model</span><span class="cmp-val bad">${r.original}</span></div>
+                <div class="cmp-row"><span class="cmp-key">Cost</span><span class="cmp-val bad">$${(o.cost*m).toFixed(4)}</span></div>
+                <div class="cmp-row"><span class="cmp-key">CO2</span><span class="cmp-val bad">${(o.co2*m).toFixed(3)}g</span></div>
+            </div>
+            <div class="cmp-arrow">→</div>
+            <div class="cmp-side"><div class="cmp-head good">With EcoRouter</div>
+                <div class="cmp-row"><span class="cmp-key">Model</span><span class="cmp-val good">${r.model}</span></div>
+                <div class="cmp-row"><span class="cmp-key">Cost</span><span class="cmp-val good">$${(ro.cost*m).toFixed(4)}</span></div>
+                <div class="cmp-row"><span class="cmp-key">CO2</span><span class="cmp-val good">${(ro.co2*m).toFixed(3)}g</span></div>
+            </div>`;
+        document.getElementById('compareSection').style.display = 'block';
+    }
+
+    async function runAnalysis() {
+        const text = document.getElementById('userInput').value.trim();
+        if (!text) return;
+        const btn = document.getElementById('analyzeBtn');
+        btn.disabled = true; btn.textContent = 'Analyzing...';
+
+        if (useRealAPI || useAIClassifier) {
+            try {
+                const res = await fetch('/v1/chat/demo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eco-demo-key-2026' },
+                    body: JSON.stringify({ model: selectedModel, messages: [{ role: 'user', content: text }] })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                const eco = data.ecorouter;
+                showResult(
+                    { original: eco.originalModel, model: eco.selectedModel, reason: eco.reason, complexity: eco.complexity },
+                    { co2Saved: eco.savings.co2SavedGrams, waterSaved: eco.savings.waterSavedMl, moneySaved: eco.savings.moneySaved, pct: eco.savings.reductionPercent },
+                    data.usage.total_tokens
+                );
+            } catch (err) {
+                console.warn('Backend unavailable, fallback:', err.message);
+                const rt = route(text, selectedModel), tokens = Math.max(100, text.length * 2);
+                showResult({ original: selectedModel, model: rt.model, reason: '[Fallback] ' + rt.reason, complexity: rt.complexity }, calcSavings(selectedModel, rt.model, tokens), tokens);
+            }
+        } else {
+            const rt = route(text, selectedModel), tokens = Math.max(100, text.length * 2);
+            showResult({ original: selectedModel, model: rt.model, reason: rt.reason, complexity: rt.complexity }, calcSavings(selectedModel, rt.model, tokens), tokens);
+        }
+        btn.disabled = false; btn.textContent = 'Analyze with EcoRouter';
+    }
+
+    (function initNav() {
+        const user = JSON.parse(localStorage.getItem('eco_user') || 'null');
+        if (user) {
+            const a = document.getElementById('navAction');
+            if (a) { a.textContent = user.contactName || 'Account'; a.href = '/login.html'; }
+            const b = document.getElementById('navAuth');
+            if (b) b.style.display = 'none';
+        }
+    })();
+
+    window.addEventListener('load', () => setTimeout(() => useExample('Translate hello to Russian', 'gpt-4'), 500));
+</script>
+</body>
+</html>

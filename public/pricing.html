@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — EcoRouter AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="quality-controls.css">
+    <link rel="stylesheet" href="win-win-pricing.css">
+    
+
+    <style>
+        .billing-toggle {
+            display: inline-flex; align-items: center; gap: 0;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 3px;
+        }
+        .billing-btn {
+            padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+            cursor: pointer; border: none; font-family: inherit;
+            background: transparent; color: var(--text-3); transition: all var(--dur) var(--ease);
+        }
+        .billing-btn.active { background: var(--accent); color: #000; }
+        .billing-save { display: inline-block; padding: 2px 7px; background: rgba(251,191,36,0.12); color: var(--gold); border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+
+        .plans-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 56px; }
+
+        .plan-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r);
+            padding: 24px 20px; display: flex; flex-direction: column;
+            transition: all var(--dur) var(--ease); position: relative; overflow: hidden;
+        }
+        .plan-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+        .plan-card.featured { border-color: var(--accent-border); background: linear-gradient(170deg, rgba(16,185,129,0.05), transparent); }
+        .plan-card.featured:hover { box-shadow: 0 12px 32px rgba(16,185,129,0.12); }
+        .featured-tag { position: absolute; top: 0; right: 16px; padding: 3px 10px; background: var(--accent); color: #000; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 0 0 6px 6px; }
+
+        .plan-name { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .plan-price { display: flex; align-items: baseline; gap: 3px; margin-bottom: 4px; }
+        .plan-price-val { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+        .plan-price-per { font-size: 12px; color: var(--text-3); }
+        .plan-desc { font-size: 12px; color: var(--text-3); margin-bottom: 20px; min-height: 32px; line-height: 1.5; }
+
+        .plan-btn {
+            width: 100%; padding: 9px; border-radius: var(--r-sm); border: 1px solid var(--border);
+            font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
+            background: transparent; color: var(--text-2); transition: all var(--dur) var(--ease); margin-bottom: 20px;
+        }
+        .plan-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card); }
+        .plan-btn.accent { background: var(--accent); color: #000; border-color: var(--accent); }
+        .plan-btn.accent:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow); }
+
+        .plan-divider { height: 1px; background: var(--border); margin-bottom: 16px; }
+        .plan-features { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .feat { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; line-height: 1.4; }
+        .feat-yes { color: var(--accent); font-size: 13px; flex-shrink: 0; }
+        .feat-no { color: var(--text-3); font-size: 13px; flex-shrink: 0; opacity: 0.5; }
+        .feat-text { color: var(--text-2); }
+        .feat-text strong { color: var(--text); font-weight: 600; }
+
+        .section-heading { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 24px; text-align: center; }
+
+        .compare-section { margin-bottom: 56px; }
+        .compare-table { width: 100%; border-collapse: collapse; }
+        .compare-table th, .compare-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .compare-table th { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; background: rgba(255,255,255,0.02); }
+        .compare-table td:first-child { color: var(--text-2); }
+        .compare-table td:not(:first-child) { text-align: center; }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .tbl-yes { color: var(--accent); }
+        .tbl-no { color: var(--text-3); opacity: 0.4; }
+        .tbl-hl { background: rgba(16,185,129,0.03); }
+
+        .faq-section { margin-bottom: 56px; }
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .faq-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; transition: border-color var(--dur) var(--ease); }
+        .faq-card:hover { border-color: var(--border-hover); }
+        .faq-q { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .faq-a { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+        .faq-a code { background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+        @media (max-width: 1100px) { .plans-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .plans-grid { grid-template-columns: 1fr 1fr; } .faq-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 500px) { .plans-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-left">
+        <a href="/" class="nav-logo">EcoRouter AI</a>
+    </div>
+    <div class="nav-center">
+        <a href="/dashboard.html" class="nav-link">Dashboard</a>
+        <a href="/pricing.html" class="nav-link active">Pricing</a>
+        <a href="/audit.html" class="nav-link">Free audit</a>
+        <a href="/model-selector-demo.html" class="nav-link">Demo</a>
+    </div>
+    <div class="nav-right">
+        <a href="/register.html" class="nav-btn">Get Started</a>
+    </div>
+</nav>
+
+<div class="page">
+
+    <!-- WIN-WIN PRICING SECTION -->
+    <div class="win-win-pricing">
+        <div class="win-win-header">
+            <h2 class="win-win-title">Win-Win Pricing Model</h2>
+            <p class="win-win-subtitle">You control quality, we guarantee savings. No compromise, no surprises.</p>
+        </div>
+
+        <div class="quality-guarantee">
+            <div class="guarantee-icon">✓</div>
+            <div class="guarantee-content">
+                <h4>Quality Gate Guarantee</h4>
+                <p>If our routing fails to meet your quality standards, we automatically retry with premium models at our cost. You always get the quality you pay for.</p>
+            </div>
+        </div>
+
+        <div class="pricing-comparison">
+            <div class="comparison-column">
+                <h3 class="comparison-title traditional">📉 Traditional AI Usage</h3>
+                <ul class="comparison-list">
+                    <li class="negative">✗ Fixed expensive models</li>
+                    <li class="negative">✗ No cost control</li>
+                    <li class="negative">✗ Manual optimization</li>
+                    <li class="negative">✗ Hidden overages</li>
+                    <li class="negative">✗ No transparency</li>
+                </ul>
+            </div>
+            <div class="comparison-column">
+                <h3 class="comparison-title ecorouter">📈 EcoRouter AI</h3>
+                <ul class="comparison-list">
+                    <li class="positive">✓ Smart model selection</li>
+                    <li class="positive">✓ User-controlled quality</li>
+                    <li class="positive">✓ Automatic optimization</li>
+                    <li class="positive">✓ Predictable costs</li>
+                    <li class="positive">✓ Full transparency</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="savings-calculator">
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text);">Calculate Your Savings</h3>
+            <div class="calc-input-group">
+                <input type="number" class="calc-input" id="monthlyRequests" placeholder="Monthly requests" value="10000">
+                <select class="calc-input" id="currentModel">
+                    <option value="gpt-4">Currently using GPT-4</option>
+                    <option value="gpt-4o">Currently using GPT-4o</option>
+                    <option value="gpt-3.5-turbo">Currently using GPT-3.5</option>
+                </select>
+            </div>
+            <div class="calc-results">
+                <div class="calc-result">
+                    <div class="calc-value" id="monthlySavings">$0</div>
+                    <div class="calc-label">Monthly Savings</div>
+                </div>
+                <div class="calc-result">
+                    <div class="calc-value" id="yearlySavings">$0</div>
+                    <div class="calc-label">Yearly Savings</div>
+                </div>
+                <div class="calc-result">
+                    <div class="calc-value" id="co2Saved">0kg</div>
+                    <div class="calc-label">CO2 Saved</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <div class="trust-badge-icon">🔒</div>
+                <span>SLA Guaranteed</span>
+            </div>
+            <div class="trust-badge">
+                <div class="trust-badge-icon">🌱</div>
+                <span>ESG Compliant</span>
+            </div>
+            <div class="trust-badge">
+                <div class="trust-badge-icon">📊</div>
+                <span>Full Analytics</span>
+            </div>
+            <div class="trust-badge">
+                <div class="trust-badge-icon">⚡</div>
+                <span>Real-time Routing</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="hero-center fade-in">
+        <div class="section-label">Pricing Plans</div>
+        <h1 class="page-title">Pay for <span class="hl">savings</span>, not overhead</h1>
+        <p class="page-desc center">Start free. Upgrade when ready. No lock-in, cancel anytime.</p>
+        <div style="margin-top:20px;">
+            <div class="billing-toggle">
+                <button class="billing-btn active" id="monthlyBtn">Monthly</button>
+                <button class="billing-btn" id="yearlyBtn">Yearly (2 months free)</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="plans-grid" id="plans">
+
+        <!-- FREE -->
+        <div class="plan-card fade-in">
+            <div class="plan-name">Free</div>
+            <div class="plan-price"><span class="plan-price-val">$0</span><span class="plan-price-per">/ forever</span></div>
+            <div class="plan-desc">See your waste. No optimization yet.</div>
+            <button class="plan-btn" onclick="selectPlan('free')">Start free audit</button>
+            <div class="plan-divider"></div>
+            <div class="plan-features">
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Full cost audit</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>CO2 &amp; water report</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Live demo</strong> access</span></div>
+                <div class="feat"><span class="feat-no">&#10005;</span><span class="feat-text">No API routing</span></div>
+                <div class="feat"><span class="feat-no">&#10005;</span><span class="feat-text">No ESG reports</span></div>
+            </div>
+        </div>
+
+        <!-- STARTER -->
+        <div class="plan-card fade-in fade-in-d1">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price"><span class="plan-price-val" data-monthly="29" data-annual="23">$29</span><span class="plan-price-per">/ mo</span></div>
+            <div class="plan-desc">For small teams and side projects.</div>
+            <button class="plan-btn" onclick="selectPlan('starter')">Get Starter</button>
+            <div class="plan-divider"></div>
+            <div class="plan-features">
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>2,000 req</strong> / day</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Smart routing</strong> via API</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Real-time dashboard</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Monthly ESG</strong> report</span></div>
+                <div class="feat"><span class="feat-no">&#10005;</span><span class="feat-text">No custom rules</span></div>
+            </div>
+        </div>
+
+        <!-- BUSINESS (NEW 3rd plan) -->
+        <div class="plan-card fade-in fade-in-d2">
+            <div class="plan-name">Business</div>
+            <div class="plan-price"><span class="plan-price-val" data-monthly="59" data-annual="47">$59</span><span class="plan-price-per">/ mo</span></div>
+            <div class="plan-desc">Growing teams that need more capacity.</div>
+            <button class="plan-btn" onclick="selectPlan('business')">Get Business</button>
+            <div class="plan-divider"></div>
+            <div class="plan-features">
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>10,000 req</strong> / day</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Custom routing rules</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Team analytics</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Bi-weekly ESG</strong> reports</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Email support</strong></span></div>
+            </div>
+        </div>
+
+        <!-- PRO (FEATURED) -->
+        <div class="plan-card featured fade-in fade-in-d3">
+            <div class="featured-tag">Popular</div>
+            <div class="plan-name">Pro</div>
+            <div class="plan-price"><span class="plan-price-val" data-monthly="99" data-annual="79">$99</span><span class="plan-price-per">/ mo</span></div>
+            <div class="plan-desc">For companies serious about green AI.</div>
+            <button class="plan-btn accent" onclick="selectPlan('pro')">Get Pro</button>
+            <div class="plan-divider"></div>
+            <div class="plan-features">
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>50,000 req</strong> / day</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Advanced routing</strong> + AI classifier</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Analytics breakdown</strong> per team</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Weekly ESG</strong> PDF reports</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Priority support</strong></span></div>
+            </div>
+        </div>
+
+        <!-- ENTERPRISE -->
+        <div class="plan-card fade-in fade-in-d4">
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price"><span class="plan-price-val">Custom</span></div>
+            <div class="plan-desc">Unlimited scale, SLA, private deploy.</div>
+            <button class="plan-btn" onclick="selectPlan('enterprise')">Contact sales</button>
+            <div class="plan-divider"></div>
+            <div class="plan-features">
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Unlimited</strong> requests</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Private deployment</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>99.9% SLA</strong></span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Custom ESG</strong> for investors</span></div>
+                <div class="feat"><span class="feat-yes">&#10003;</span><span class="feat-text"><strong>Dedicated support</strong> + onboarding</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- COMPARISON -->
+    <div class="compare-section">
+        <h2 class="section-heading">Compare all plans</h2>
+        <div style="overflow-x:auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th>Starter</th>
+                        <th>Business</th>
+                        <th class="tbl-hl" style="color:var(--accent)">Pro</th>
+                        <th>Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Smart routing</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td><td class="tbl-hl"><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td></tr>
+                    <tr><td>Requests / day</td><td>—</td><td>2,000</td><td>10,000</td><td class="tbl-hl">50,000</td><td>Unlimited</td></tr>
+                    <tr><td>Dashboard</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td><td class="tbl-hl"><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td></tr>
+                    <tr><td>ESG reports</td><td><span class="tbl-no">—</span></td><td>Monthly</td><td>Bi-weekly</td><td class="tbl-hl">Weekly PDF</td><td>Custom</td></tr>
+                    <tr><td>Custom rules</td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">&#10003;</span></td><td class="tbl-hl"><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td></tr>
+                    <tr><td>Team analytics</td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">&#10003;</span></td><td class="tbl-hl"><span class="tbl-yes">&#10003;</span></td><td><span class="tbl-yes">&#10003;</span></td></tr>
+                    <tr><td>Private deploy</td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td class="tbl-hl"><span class="tbl-no">—</span></td><td><span class="tbl-yes">&#10003;</span></td></tr>
+                    <tr><td>SLA</td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td><span class="tbl-no">—</span></td><td class="tbl-hl"><span class="tbl-no">—</span></td><td>99.9%</td></tr>
+                    <tr><td>Support</td><td>Community</td><td>Email</td><td>Email</td><td class="tbl-hl">Priority</td><td>Dedicated</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+        <h2 class="section-heading">Questions &amp; answers</h2>
+        <div class="faq-grid">
+            <div class="faq-card"><div class="faq-q">Do I need to change my code?</div><div class="faq-a">No. Just swap one URL — from <code>api.openai.com</code> to your EcoRouter endpoint. That's it.</div></div>
+            <div class="faq-card"><div class="faq-q">Who owns my OpenAI API key?</div><div class="faq-a">You do. EcoRouter uses your key server-side and never stores it. We only see request metadata.</div></div>
+            <div class="faq-card"><div class="faq-q">What if EcoRouter picks the wrong model?</div><div class="faq-a">You can force a specific model per request, or set custom routing rules in Business/Pro/Enterprise plans.</div></div>
+            <div class="faq-card"><div class="faq-q">Can I get an ESG report for investors?</div><div class="faq-a">Yes. Pro and Enterprise include automated PDF ESG reports tracking CO2, water savings, and Green AI score.</div></div>
+            <div class="faq-card"><div class="faq-q">How accurate are the CO2 numbers?</div><div class="faq-a">Based on published research (Patterson et al., 2021) and estimated energy consumption. Numbers are conservative estimates.</div></div>
+            <div class="faq-card"><div class="faq-q">Is there a free trial?</div><div class="faq-a">We're in beta. Early users get 30 days of Pro free. No credit card required.</div></div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+        <h2 class="cta-title">Start saving today</h2>
+        <p class="cta-desc">Free audit takes 30 seconds. No signup required.</p>
+        <div class="cta-actions">
+            <a href="/audit.html" class="btn-primary">Run free audit</a>
+            <a href="/model-selector-demo.html" class="btn-outline">See live demo</a>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 EcoRouter AI</span>
+        <div class="site-footer-links">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/model-selector-demo.html">Demo</a>
+            <a href="/audit.html">Free audit</a>
+            <a href="/register.html">Sign up</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    let billing = 'monthly';
+
+    function setBilling(type) {
+        billing = type;
+        document.getElementById('btnMonthly').classList.toggle('active', type === 'monthly');
+        document.getElementById('btnAnnual').classList.toggle('active', type === 'annual');
+        document.querySelectorAll('[data-monthly]').forEach(el => {
+            const target = parseFloat(type === 'monthly' ? el.dataset.monthly : el.dataset.annual);
+            const from = parseFloat(el.textContent.replace('$', '')) || 0;
+            const start = performance.now();
+            (function tick(now) {
+                const p = Math.min((now - start) / 350, 1), e = 1 - Math.pow(1 - p, 3);
+                el.textContent = '$' + Math.round(from + (target - from) * e);
+                if (p < 1) requestAnimationFrame(tick);
+            })(start);
+        });
+    }
+
+    function selectPlan(plan) {
+        const token = localStorage.getItem('eco_token');
+        if (!token) {
+            sessionStorage.setItem('pending_plan', plan);
+            window.location.href = '/register.html';
+            return;
+        }
+        if (plan === 'free') { window.location.href = '/audit.html'; return; }
+        if (plan === 'enterprise') { alert('Contact hello@ecorouter.ai for Enterprise plans.'); return; }
+
+        const prices = { starter: billing === 'annual' ? '$23/mo' : '$29/mo', business: billing === 'annual' ? '$47/mo' : '$59/mo', pro: billing === 'annual' ? '$79/mo' : '$99/mo' };
+        if (!confirm(`Upgrade to ${plan.charAt(0).toUpperCase() + plan.slice(1)} (${prices[plan]})?\n\nBeta users get 30 days free.`)) return;
+
+        fetch('/api/auth/select-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ plan })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) { alert(data.error); return; }
+            const user = JSON.parse(localStorage.getItem('eco_user') || '{}');
+            user.plan = plan;
+            localStorage.setItem('eco_user', JSON.stringify(user));
+            alert(`You're now on the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan. 30-day trial activated.`);
+            updateNavForUser();
+        })
+        .catch(() => alert('Something went wrong. Please try again.'));
+    }
+
+    function updateNavForUser() {
+        const user = JSON.parse(localStorage.getItem('eco_user') || 'null');
+        const navBtn = document.querySelector('.nav-btn');
+        if (user && navBtn) {
+            navBtn.textContent = user.contactName || 'Account';
+            navBtn.href = '/login.html';
+        }
+    }
+
+    function calculateSavings() {
+        const requests = parseInt(document.getElementById('monthlyRequests').value) || 10000;
+        const model = document.getElementById('currentModel').value;
+        
+        const modelCosts = {
+            'gpt-4': 0.030,
+            'gpt-4o': 0.005,
+            'gpt-3.5-turbo': 0.002
+        };
+        
+        const avgTokensPerRequest = 800;
+        const currentCost = modelCosts[model] * avgTokensPerRequest * requests / 1000;
+        const optimizedCost = currentCost * 0.25; // 75% average savings
+        const monthlySavings = currentCost - optimizedCost;
+        const yearlySavings = monthlySavings * 12;
+        const co2PerToken = 0.000004; // kg CO2 per token
+        const co2Saved = (currentCost - optimizedCost) / modelCosts[model] * avgTokensPerRequest * requests / 1000 * co2PerToken;
+        
+        document.getElementById('monthlySavings').textContent = `$${monthlySavings.toFixed(0)}`;
+        document.getElementById('yearlySavings').textContent = `$${yearlySavings.toFixed(0)}`;
+        document.getElementById('co2Saved').textContent = `${co2Saved.toFixed(1)}kg`;
+    }
+
+    document.getElementById('monthlyRequests')?.addEventListener('input', calculateSavings);
+    document.getElementById('currentModel')?.addEventListener('change', calculateSavings);
+
+    updateNavForUser();
+    calculateSavings();
+
+    window.addEventListener('load', () => {
+        const p = new URLSearchParams(window.location.search).get('plan');
+        if (p && localStorage.getItem('eco_token')) selectPlan(p);
+    });
+</script>
+</body>
+</html>
