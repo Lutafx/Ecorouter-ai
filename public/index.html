@@ -3260,7 +3260,14 @@
                             <input type="text" id="regCompany" required class="ob-input" placeholder="Например: MyAI Bot">
                         </div>
 
-                        <button type="button" class="btn btn-primary btn-full" onclick="goToStep(2)" style="padding: 14px; font-size: 15px; margin-top: 8px;">Продолжить</button>
+                        <div class="ob-field" style="margin-top:8px;">
+                            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#8c8ca0;line-height:1.5;">
+                                <input type="checkbox" id="aupCheckbox" style="margin-top:3px;accent-color:#10b981;min-width:16px;">
+                                <span>Я принимаю <a href="/policy.html" target="_blank" style="color:#10b981;text-decoration:none;font-weight:600;">Политику использования</a> и условия сервиса EcoRouter AI</span>
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-full" onclick="if(!document.getElementById('aupCheckbox').checked){alert('Примите Политику использования');return;}goToStep(2)" style="padding: 14px; font-size: 15px; margin-top: 8px;">Продолжить</button>
 
                         <div style="text-align: center; margin-top: 16px;">
                             <span style="color: var(--text-2); font-size: 13px;">Уже есть аккаунт? </span>
@@ -3791,6 +3798,11 @@ response = client.chat.completions.create(
 
         <!-- Footer -->
         <footer class="footer">
+            <div style="display:flex;gap:24px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;">
+                <a href="/policy.html" style="color:#8c8ca0;text-decoration:none;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#8c8ca0'">Политика использования</a>
+                <a href="/policy.html" style="color:#8c8ca0;text-decoration:none;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#8c8ca0'">Конфиденциальность</a>
+                <a href="/policy.html" style="color:#8c8ca0;text-decoration:none;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#8c8ca0'">Условия сервиса</a>
+            </div>
             <p>&copy; 2026 EcoRouter AI. Все права защищены.</p>
         </footer>
     </div>
